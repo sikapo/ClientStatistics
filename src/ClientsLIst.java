@@ -2,33 +2,44 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 public class ClientsLIst {
-    private final String clientsList = "clients.txt";
     private final String file;
 
     public ClientsLIst() {
-//        String filePath = "src";
+        String clientsList = "clients.txt";
         this.file = new File("").getAbsolutePath() + "/" + clientsList;
-    }
-
-    public String getClientsList() {
-        return clientsList;
     }
     public String getFile() {
         return file;
     }
 
-    public String uniqueWords (FileReader bookName) throws IOException {
+    public HashMap <String, Integer> namesToArray (FileReader namesFile) throws IOException {
+        int c;
+        HashMap <String, Integer> names = new HashMap<>();
+        StringBuilder wordBuilder = new StringBuilder();
+        while ((c = namesFile.read()) != -1) {
+            if (c == 13) {
+                names.put(wordBuilder.toString().toLowerCase(), 0);
+                wordBuilder = new StringBuilder();
+            }
+            if (!(c == 13 || c == 10)) {
+                wordBuilder.append((char) c);
+            }
+        }
+        return names;
+    }
+    public String uniqueWords (FileReader bookName, HashMap<String, Integer> names1) throws IOException {
         ArrayList <String> unique = new ArrayList<>();
         int c;
         StringBuilder wordBuilder = new StringBuilder();
         while ((c = bookName.read()) != -1) {
-            wordBuilder.append((char) c);
+
             if (c == 32) {
-                unique.add(wordBuilder.toString());
+                unique.add(wordBuilder.toString().toLowerCase());
                 wordBuilder = new StringBuilder();
+            }
+            if (!(c==32)){
+                wordBuilder.append((char) c);
             }
         }
         HashMap<String, Integer> mostPopular = new HashMap<>();
@@ -41,12 +52,19 @@ public class ClientsLIst {
             }
             else mostPopular.put(word, 1);
         }
+
         LinkedHashMap<String, Integer> mostPopularOrder = new LinkedHashMap<>();
+
         mostPopular.entrySet().stream()
                 .filter(v -> v.getValue() > 1)
+                .filter(v -> !names1.containsKey(v.getKey()))
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .forEach(w -> mostPopularOrder.put(w.getKey(), w.getValue()));
+                .forEach(v -> mostPopularOrder.put(v.getKey(), v.getValue()));
 
-        return mostPopularOrder.toString();
+        StringBuilder outputBuilder = new StringBuilder();
+        for (Map.Entry<String, Integer> entry : mostPopularOrder.entrySet()) {
+            outputBuilder.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+        }
+        return outputBuilder.toString();
     }
 }

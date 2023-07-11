@@ -1,42 +1,31 @@
-import java.awt.print.Book;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.HashMap;
 
 public class Main {
-    public static void main(String[] args) {
+
+    public static void main(String[] args) throws IOException {
         ClientsLIst clientsLIst = new ClientsLIst();
+        String names = "names.txt";
 
         FileReader fileReader;
-        try {
-            fileReader = new FileReader(clientsLIst.getFile());
-            System.out.println(clientsLIst.uniqueWords(fileReader));
+            fileReader = new FileReader(names);
+            HashMap<String, Integer> names1 = new HashMap<>(clientsLIst.namesToArray(fileReader));
             fileReader.close();
-        } catch (IOException e) {
-            System.err.println("No such file was found. Please, enter the correct title");
-        }
+
+            fileReader = new FileReader(clientsLIst.getFile());
+            System.out.println(clientsLIst.uniqueWords(fileReader, names1));
+            fileReader.close();
+
 
         String statisticsFile = clientsLIst.getFile() + "_statistic.txt";
         FileWriter fileWriter;
-        try {
-            fileWriter = new FileWriter(statisticsFile, true);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
+
+            fileWriter = new FileWriter(statisticsFile, false);
+
             fileReader = new FileReader(clientsLIst.getFile());
-            fileWriter.write(clientsLIst.uniqueWords(fileReader));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
+            fileWriter.write(clientsLIst.uniqueWords(fileReader, names1));
             fileWriter.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
