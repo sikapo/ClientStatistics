@@ -1,6 +1,7 @@
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 public class Main {
@@ -22,10 +23,10 @@ public class Main {
         String statisticsFile = clientsLIst.getFile() + "_statistic.txt";
         FileWriter fileWriter;
 
-            fileWriter = new FileWriter(statisticsFile, false);
+            fileWriter = new FileWriter(statisticsFile, true);
 
             fileReader = new FileReader(clientsLIst.getFile());
-            fileWriter.write(clientsLIst.uniqueWords(fileReader, names1));
+            fileWriter.write(LocalDateTime.now()+ "\n" + clientsLIst.uniqueWords(fileReader, names1) + "\n");
             fileWriter.close();
     }
 }
